@@ -1,9 +1,9 @@
 import { DataSource } from 'apollo-datasource'
-import { accService } from '../DBService/servicesInstance'
+import { accService, userService } from '../DBService/servicesInstance'
 import Moment from 'moment/moment'
 import Boom from '@hapi/boom'
 
-export default class ACCAPI extends DataSource {
+export default class DBAPI extends DataSource {
   initialize(config) {
     this.context = config.context
   }
@@ -25,7 +25,15 @@ export default class ACCAPI extends DataSource {
     delete ACC._rev
     return {
       ...ACC,
-      cursor: +Moment(ACC.createTime)
+      cursor: (+Moment(ACC.createTime)).toString()
+    }
+  }
+
+  async createUser(userInput) {
+    try {
+      const user = await userService.insertDocument(userInput)
+    } catch (err) {
+
     }
   }
 }

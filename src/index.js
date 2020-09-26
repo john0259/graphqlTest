@@ -1,7 +1,7 @@
 import { ApolloServer } from 'apollo-server'
 import { typeDefs } from './typeDefs'
 import { resolvers } from './resolvers'
-import ACCAPI from './dataSources/ACCAPI'
+import DBAPI from './dataSources/DBAPI'
 import CoreAPI from './dataSources/coreAPI'
 
 const server = new ApolloServer({
@@ -14,7 +14,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   dataSources: () => ({
-    ACCAPI: new ACCAPI(),
+    DBAPI: new DBAPI(),
     CoreAPI: new CoreAPI()
   })
 })

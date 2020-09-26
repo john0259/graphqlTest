@@ -8,7 +8,7 @@ export const ACCResolvers = {
     ACCList: async (_, { pageSize = 20, after }, { dataSources }) => {
       try {
         logger.info(await dataSources.CoreAPI.getPrinterList())
-        const allACCes = await dataSources.ACCAPI.getAllACCs()
+        const allACCes = await dataSources.DBAPI.getAllACCs()
         const accs = paginateResults({
           after,
           pageSize,
@@ -30,7 +30,7 @@ export const ACCResolvers = {
   Mutation: {
     insertACC: async (_, args, { dataSources }) => {
       const { AccContent } = args
-      const acc = await dataSources.ACCAPI.insertAcc(AccContent)
+      const acc = await dataSources.DBAPI.insertAcc(AccContent)
       logger.info(acc)
       return acc
     }

@@ -1,10 +1,20 @@
 import ArangodbService from './arangoDBServices'
 import Moment from 'moment/moment'
+import { v4 as uuidV4 } from 'uuid'
 
 export default class CollectionService extends ArangodbService {
   constructor(connConfig, collectionName) {
     super()
     this._collection = collectionName
+  }
+
+  async insertDocument(jsonData) {
+    const Data = {
+      _key: uuidV4(),
+      ...jsonData,
+      createTime: Moment().toISOString(true)
+    }
+    return super.saveDocument(this._collection, Data)
   }
 
   /**
@@ -54,5 +64,13 @@ export default class CollectionService extends ArangodbService {
    */
   async removeDocument(documentHandler) {
     await super.removeDocument(this._collection, documentHandler)
+  }
+
+  /**
+   * @param options {object}: 擴充功能 =>{offset:起始位址,limit:幾筆}
+   * @returns {Promise<*|Array>}
+   */
+  async findAll(options) {
+    return super.findAll(this._collection, options)
   }
 }
