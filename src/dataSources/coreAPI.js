@@ -9,10 +9,21 @@ export default class CoreAPI extends RESTDataSource {
   }
 
   willSendRequest(request) {
-    request.headers.set('Authorization', this.context.token)
+    request.headers.set('Authorization', `Bearer ${this.context.user.token}`)
+    if (request.body && typeof request.body === 'object') {
+      request.body = { ...request.body }
+    }
   }
 
   async getPrinterList() {
     return this.get('/printDriver/printerList')
+  }
+
+  async createUser(user) {
+    return this.post('/users', user)
+  }
+
+  async login(userName, password) {
+    return this.post('/users/authenticate', { userName, password })
   }
 }

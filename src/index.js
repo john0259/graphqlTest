@@ -1,22 +1,38 @@
-import { ApolloServer } from 'apollo-server'
+import { ApolloServer, AuthenticationError } from 'apollo-server'
 import { typeDefs } from './typeDefs'
 import { resolvers } from './resolvers'
+import { secret } from './config/token'
+import { User } from './typeDefs/types/userType'
+
+import { IsAuthenticatedDirective, AuthDirective } from './directives/directives'
 import DBAPI from './dataSources/DBAPI'
 import CoreAPI from './dataSources/coreAPI'
+import jwt from 'jsonwebtoken'
 
 const server = new ApolloServer({
-  context: ({ req }) => {
-    return {
-      req,
-      token: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQkpQRFMwMSIsInRva2VuIjoiZWZIQUNMSEdQeWNYLUs1Rm5HcXpONDc0c2F2MzlydUZYaEVJNWFxSmFMTjBtdDFHYXBLS2owclJPV1Q5N2lNZyIsImlhdCI6MTU5OTQ2MzI4NSwiZXhwIjoxNjAyMDU1Mjg1fQ.icxc6XgHegBw5RFctZjVT-GRn-75obyrSoQ1zRbAcEA'
+  context: async ({ req }) => {
+    const token = req.headers['x-token']
+    const result = { req }
+    if (token) {
+      try {
+        const user = await jwt.verify(token, secret)
+        result.user = new User(user)
+      } catch (err) {
+        throw new AuthenticationError('token expired.')
+      }
     }
+    return result
   },
   typeDefs,
   resolvers,
   dataSources: () => ({
     DBAPI: new DBAPI(),
     CoreAPI: new CoreAPI()
-  })
+  }),
+  schemaDirectives: {
+    isAuthenticated: IsAuthenticatedDirective,
+    auth: AuthDirective
+  }
 })
 
 server.listen().then(({ url }) => {

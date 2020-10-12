@@ -1,6 +1,9 @@
 import { gql } from 'apollo-server'
 
 export const query = gql`
+  directive @isAuthenticated on FIELD_DEFINITION
+  directive @auth(requires: UserRole = ADMIN, ) on OBJECT | FIELD_DEFINITION
+  
     type Query {
         ACCList(
             """
@@ -8,12 +11,14 @@ export const query = gql`
             """
             pageSize: Int
             after: String
-        ): ACCConnection!
+        ): ACCConnection! @isAuthenticated
     }
 
     type Mutation {
-        insertACC(AccContent: ACCInput!): ACC
-        uploadFile(files: [Upload]!): [File]
+        signUp(userInfo: UserInput!): String
+        login(userName: String!, password: String!): String
+        insertACC(AccContent: ACCInput!): ACC @isAuthenticated
+        uploadFile(files: [Upload]!): [File] @isAuthenticated
     }
 
     type ACCConnection {

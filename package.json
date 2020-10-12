@@ -24,6 +24,7 @@
     "graphql": "^15.3.0",
     "graphql-type-json": "^0.3.2",
     "graphql-upload": "^11.0.0",
+    "jsonwebtoken": "^8.5.1",
     "loadsh": "0.0.4",
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
