@@ -9,7 +9,9 @@ export default class CoreAPI extends RESTDataSource {
   }
 
   willSendRequest(request) {
-    request.headers.set('Authorization', `Bearer ${this.context.user.token}`)
+    if (this.context.user) {
+      request.headers.set('Authorization', `Bearer ${this.context.user.token}`)
+    }
     if (request.body && typeof request.body === 'object') {
       request.body = { ...request.body }
     }
