@@ -8,9 +8,10 @@ export const userResolvers = {
       const coreUser = Object.assign({}, userInfo)
       delete coreUser.roles
       delete userInfo.password
-      const result = await dataSources.CoreAPI.createUser(coreUser)
+      await dataSources.CoreAPI.createUser(coreUser)
       const newUser = await dataSources.DBAPI.createUser(userInfo)
-      return await createToken({ ...newUser, token: result.token })
+      const token = await dataSources.CoreAPI.login(coreUser.userName, coreUser.password).then(result => result.token)
+      return await createToken({ ...newUser, token })
     },
     login: async (_, { userName, password }, { dataSources }) => {
       const token = await dataSources.CoreAPI.login(userName, password).then(result => result.token)

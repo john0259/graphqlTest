@@ -11,7 +11,7 @@ import jwt from 'jsonwebtoken'
 
 const server = new ApolloServer({
   context: async ({ req }) => {
-    const token = req.headers['x-token']
+    const token = req.headers.authorization
     const result = { req }
     if (token) {
       try {
