@@ -9,15 +9,22 @@ export const query = gql`
             """
             The number of results ti show. Must be >= 1. Default = 20
             """
-            pageSize: Int
+            pageSize: Int = 20
             after: String
-        ): ACCConnection! @isAuthenticated
+        ): ACCConnection! @auth(requires: MANAGER) @isAuthenticated
     }
 
     type Mutation {
+        """
+        註冊帳號
+        """
         signUp(userInfo: UserInput!): String
+        """
+        帳號登入
+        """
         login(userName: String!, password: String!): String
-        insertACC(AccContent: ACCInput!): ACC @isAuthenticated
+        insertACC(AccContent: ACCInput!): ACC @isAuthenticated @auth(requires: MANAGER)
+        deleteACC(name: String!): String @auth(requires: MANAGER) @isAuthenticated
         uploadFile(files: [Upload]!): [File] @isAuthenticated
     }
 

@@ -8,10 +8,16 @@ export default class DBAPI extends DataSource {
     this.context = config.context
   }
 
-  async insertAcc(accInput) {
-    const findAcc = await accService.queryDocuments({ name: accInput.name })
-    if (findAcc.length > 0) throw Boom.badRequest('name is existed')
+  async insertACC(accInput) {
+    const findACC = await accService.queryDocuments({ name: accInput.name })
+    if (findACC.length > 0) throw Boom.badRequest('name is existed')
     return await accService.insertDocument(accInput).then(result => this.ACCReducer(result.new))
+  }
+
+  async deleteACC(name) {
+    const findACC = await accService.queryDocuments({ name })
+    if (!findACC.length) throw Boom.notFound(`name: ${name} ACC not Found.`)
+    await accService.removeDocument(findACC[0])
   }
 
   async getAllACCs() {
