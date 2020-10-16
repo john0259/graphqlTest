@@ -36,13 +36,16 @@ export default class DBAPI extends DataSource {
   }
 
   async createUser(userInput) {
-    const findUser = await userService.queryDocuments({ userName: userInput.userName })
-    if (findUser.length > 0) throw Boom.badRequest('User is existed')
-    return await userService.insertDocument(userInput).then(result => result.new)
+    try {
+      return await userService.insertDocument({ _key: userInput.userName, roles: userInput.roles })
+        .then(result => result.new)
+    } catch (err) {
+      throw Boom.badRequest('User is existed')
+    }
   }
 
   async findUserByName(userName) {
-    const result = await userService.queryDocuments({ userName })
+    const result = await userService.queryDocuments({ _key: userName })
     if (!result.length) throw Boom.notFound(`${userName} is not sign up`)
     return result[0]
   }
