@@ -10,36 +10,39 @@ export const printerResolvers = {
     }
   },
   Mutation: {
-    insertPrinter: async (_, { printerInfo }, { dataSources }) => {
-      console.log(1)
-      const corePrinter = Object.assign({}, printerInfo)
-      delete corePrinter.nickname
+    insertPrinter: async (_, { printerInfo, file }, { dataSources }) => {
+      console.log(process.cwd())
+      const { createReadStream, filename } = await file
+      const tempFilename = `./tmp/${filename}`
+      const stream = createReadStream()
 
-      // const { createReadStream, filename } = await file
-      // const tempFilename = `/tmp/${Date.now()}/${filename}`
-      // const stream = createReadStream()
-      //
-      // await new Promise((resolve, reject) => {
-      //   stream
-      //     .pipe(createWriteStream(tempFilename))
-      //     .on('finish', resolve)
-      //     .on('error', (error) => {
-      //       unlink(tempFilename, () => reject(error))
-      //       console.log('writerror....', error)
-      //     })
-      // })
-      // const rstream = createReadStream(tempFilename)
+      await new Promise((resolve, reject) => {
+        stream
+          .pipe(createWriteStream(tempFilename))
+          .on('finish', resolve)
+          .on('error', (error) => {
+            unlink(tempFilename, () => reject(error))
+            console.log('writerror....', error)
+          })
+      })
+      const rstream = createReadStream(tempFilename)
       const data = new FormData()
-      // data.append('driver', rstream)
-      data.append('name', corePrinter.name)
-      data.append('ip', corePrinter.ip)
-      data.append('driverType', corePrinter.driverType)
-      data.append('manufacturer', corePrinter.manufacturer)
-      data.append('model', corePrinter.model)
-      data.append('uri', corePrinter.uri)
-      data.append('trayInfo', corePrinter.trayInfo.toString())
+      data.append('driver', rstream, filename)
+      data.append('name', printerInfo.name)
+      data.append('ip', printerInfo.ip)
+      data.append('driverType', printerInfo.driverType)
+      data.append('manufacturer', printerInfo.manufacturer)
+      data.append('model', printerInfo.model)
+      data.append('uri', printerInfo.uri)
+      data.append('trayInfo', printerInfo.trayInfo.toString())
       await dataSources.CoreAPI.createPrinter(data)
-      // await dataSource.DBAPI
+      await dataSources.DBAPI.createPrinter(printerInfo.name, printerInfo.nickname)
+      return 'insert Printer succeed'
+    }
+  },
+  Printer: {
+    nickname: async (parent, __, { dataSources }) => {
+      return dataSources.DBAPI.findPrinterByName(parent.name).then(result => result !== null ? result.nickname : '')
     }
   }
 

@@ -12,6 +12,16 @@ export const query = gql`
             pageSize: Int = 20
             after: String
         ): ACCConnection! @auth(requires: MANAGER) @isAuthenticated
+        printerList(
+            """
+            The number of results ti show. Must be >= 1. Default = 20
+            """
+            pageSize: Int = 20
+            """
+            Default = 0
+            """
+            offset: Int! = 0
+        ): [Printer]!
     }
 
     type Mutation {
@@ -25,7 +35,8 @@ export const query = gql`
         login(userName: String!, password: String!): String
         insertACC(AccContent: ACCInput!): ACC @isAuthenticated @auth(requires: MANAGER)
         deleteACC(name: String!): String @auth(requires: MANAGER) @isAuthenticated
-        uploadFile(files: [Upload]!): [File] @isAuthenticated
+        insertPrinter(printerInfo: PrinterInput!, file: Upload): String
+        uploadFile(files: [Upload]!): [File]
     }
 
     type ACCConnection {

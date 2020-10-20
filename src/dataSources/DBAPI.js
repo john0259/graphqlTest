@@ -1,5 +1,5 @@
 import { DataSource } from 'apollo-datasource'
-import { accService, userService } from '../DBService/servicesInstance'
+import { accService, printerService, userService } from '../DBService/servicesInstance'
 import Moment from 'moment/moment'
 import Boom from '@hapi/boom'
 
@@ -48,5 +48,14 @@ export default class DBAPI extends DataSource {
     const result = await userService.queryDocuments({ _key: userName })
     if (!result.length) throw Boom.notFound(`${userName} is not sign up`)
     return result[0]
+  }
+
+  async createPrinter(name, nickname) {
+    await printerService.insertDocument({ _key: name, nickname })
+  }
+
+  async findPrinterByName(name) {
+    const result = await printerService.queryDocuments({ _key: name })
+    return result.length ? result[0] : null
   }
 }
