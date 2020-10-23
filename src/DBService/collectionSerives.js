@@ -43,13 +43,13 @@ export default class CollectionService extends ArangodbService {
    *            回傳更新後的documents 存放於Object.new中
    */
   async updateByQuery(query, updateJson) {
-    const jobDocs = await this.queryDocuments(query)
-    if (jobDocs.length !== 0) {
+    const docs = await this.queryDocuments(query)
+    if (docs.length !== 0) {
       updateJson.modifyTime = Moment().toISOString(true)
-      const newJobDocs = jobDocs.map(item => {
+      const newDocs = docs.map(item => {
         return Object.assign({}, item, updateJson)
       })
-      return super.updateDocuments(this._collection, newJobDocs)
+      return super.updateDocuments(this._collection, newDocs)
     } else {
       const error = new Error('Document not found.')
       error.code = 'ERR_DOC_NOT_FOUND'

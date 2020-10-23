@@ -1,9 +1,9 @@
 import { gql } from 'apollo-server'
 
 export const query = gql`
-  directive @isAuthenticated on FIELD_DEFINITION
-  directive @auth(requires: UserRole = ADMIN, ) on OBJECT | FIELD_DEFINITION
-  
+    directive @isAuthenticated on FIELD_DEFINITION
+    directive @auth(requires: UserRole = ADMIN, ) on OBJECT | FIELD_DEFINITION
+
     type Query {
         ACCList(
             """
@@ -33,6 +33,7 @@ export const query = gql`
         帳號登入
         """
         login(userName: String!, password: String!): String
+        setRoleByUserName(userName: String!, roles: [UserRole]!): User @auth(requires: ADMIN) @isAuthenticated
         insertACC(AccContent: ACCInput!): ACC @isAuthenticated @auth(requires: MANAGER)
         deleteACC(name: String!): String @auth(requires: MANAGER) @isAuthenticated
         insertPrinter(printerInfo: PrinterInput!, file: Upload): String

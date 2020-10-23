@@ -38,7 +38,7 @@ export default class DBAPI extends DataSource {
   async createUser(userInput) {
     try {
       return await userService.insertDocument({ _key: userInput.userName, roles: userInput.roles })
-        .then(result => result.new)
+        .then(result => this.userReducer(result.new))
     } catch (err) {
       throw Boom.badRequest('User is existed')
     }
@@ -47,7 +47,28 @@ export default class DBAPI extends DataSource {
   async findUserByName(userName) {
     const result = await userService.queryDocuments({ _key: userName })
     if (!result.length) throw Boom.notFound(`${userName} is not sign up`)
-    return result[0]
+    return this.userReducer(result[0])
+  }
+
+  async setRolesByName(userName, roles) {
+    try {
+      return await userService.updateByQuery({ _key: userName }, { roles })
+        .then(result => this.userReducer(result[0].new))
+    } catch (err) {
+      console.log(err)
+      if (err.code === 'ERR_DOC_NOT_FOUND') {
+        throw Boom.notFound(`${userName} not Found`)
+      } else {
+        throw Boom.internal()
+      }
+    }
+  }
+
+  userReducer(data) {
+    return {
+      userName: data._key,
+      roles: data.roles
+    }
   }
 
   async createPrinter(name, nickname) {

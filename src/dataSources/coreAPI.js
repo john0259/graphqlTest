@@ -40,6 +40,10 @@ export default class CoreAPI extends RESTDataSource {
     return this.get('/printDriver/printerList').then(result => result.printers)
   }
 
+  async getPrinterStatusByName(name) {
+    return this.get(`/printDriver/printerStatus?name=${name}`).then(result => result.status)
+  }
+
   async createUser(user) {
     return this.post('/users', user)
   }

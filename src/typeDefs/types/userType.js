@@ -5,6 +5,7 @@ export const userType = gql`
       ADMIN
       MANAGER
       WORKER
+      GUEST
   }
   
   type User {
@@ -16,7 +17,7 @@ export const userType = gql`
   input UserInput {
       userName: String!
       password: String!
-      roles: [UserRole]! = [WORKER]
+      roles: [UserRole]! = [GUEST]
   }
   
 `
