@@ -9,7 +9,7 @@ export const printerType = gql`
       driverType: String!
       manufacturer: String!
       model: String!
-      uri: String!
+      uri: String
       trayInfo: [String]!
   }
   
@@ -20,7 +20,7 @@ export const printerType = gql`
       driverType: String!
       manufacturer: String!
       model: String!
-      uri: String!
+      uri: String
       trayInfo: [String]!
   }
 `

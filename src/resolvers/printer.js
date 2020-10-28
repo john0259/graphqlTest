@@ -6,7 +6,9 @@ export const printerResolvers = {
   Query: {
     printerList: async (_, { pageSize, offset }, { dataSources }) => {
       const allPrinter = await dataSources.CoreAPI.getPrinterList()
-      return allPrinter.slice(offset, pageSize + offset)
+      return allPrinter.slice(offset, pageSize + offset).map(printer => {
+        return Object.assign({ ...printer }, { uri: printer.uri ? printer.uri : '' })
+      })
     }
   },
   Mutation: {
@@ -43,6 +45,9 @@ export const printerResolvers = {
   Printer: {
     nickname: async (parent, __, { dataSources }) => {
       return dataSources.DBAPI.findPrinterByName(parent.name).then(result => result !== null ? result.nickname : '')
+    },
+    status: async (parent, __, { dataSources }) => {
+      return dataSources.CoreAPI.getPrinterStatusByName(parent.name)
     }
   }
 

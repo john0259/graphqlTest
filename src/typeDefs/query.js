@@ -11,7 +11,7 @@ export const query = gql`
             """
             pageSize: Int = 20
             after: String
-        ): ACCConnection! @auth(requires: MANAGER) @isAuthenticated
+        ): ACCConnection! @auth(requires: WORKER) @isAuthenticated
         printerList(
             """
             The number of results ti show. Must be >= 1. Default = 20
@@ -21,7 +21,7 @@ export const query = gql`
             Default = 0
             """
             offset: Int! = 0
-        ): [Printer]!
+        ): [Printer]! @auth(requires: WORKER) @isAuthenticated
     }
 
     type Mutation {
