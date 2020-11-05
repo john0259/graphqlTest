@@ -71,8 +71,9 @@ export default class DBAPI extends DataSource {
     }
   }
 
-  async createPrinter(name, nickname) {
-    await printerService.insertDocument({ _key: name, nickname })
+  async createPrinter(name, nickname, status) {
+    const statusTime = Moment().toISOString(true)
+    await printerService.insertDocument({ _key: name, nickname, status, statusTime })
   }
 
   async findPrinterByName(name) {

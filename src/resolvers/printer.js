@@ -1,6 +1,7 @@
 import logger from '../logger'
 import FormData from 'form-data'
-import { createWriteStream, unlink } from 'fs'
+import { saveTmpFile } from '../utils'
+import lodash from 'loadsh'
 
 export const printerResolvers = {
   Query: {
@@ -13,33 +14,32 @@ export const printerResolvers = {
   },
   Mutation: {
     insertPrinter: async (_, { printerInfo, file }, { dataSources }) => {
-      console.log(process.cwd())
-      const { createReadStream, filename } = await file
-      const tempFilename = `./tmp/${filename}`
-      const stream = createReadStream()
-
-      await new Promise((resolve, reject) => {
-        stream
-          .pipe(createWriteStream(tempFilename))
-          .on('finish', resolve)
-          .on('error', (error) => {
-            unlink(tempFilename, () => reject(error))
-            console.log('writerror....', error)
-          })
-      })
-      const rstream = createReadStream(tempFilename)
+      const { rstream, tempFilename } = await saveTmpFile(file)
       const data = new FormData()
-      data.append('driver', rstream, filename)
-      data.append('name', printerInfo.name)
-      data.append('ip', printerInfo.ip)
-      data.append('driverType', printerInfo.driverType)
-      data.append('manufacturer', printerInfo.manufacturer)
-      data.append('model', printerInfo.model)
-      data.append('uri', printerInfo.uri)
-      data.append('trayInfo', printerInfo.trayInfo.toString())
+      data.append('driver', rstream, tempFilename)
+      lodash.forEach(printerInfo, (value, key) => {
+        if (value && value.length !== 0) {
+          data.append(key, value.toString())
+        }
+      })
       await dataSources.CoreAPI.createPrinter(data)
-      await dataSources.DBAPI.createPrinter(printerInfo.name, printerInfo.nickname)
+      const status = await dataSources.CoreAPI.getPrinterStatusByName(printerInfo.name)
+      await dataSources.DBAPI.createPrinter(printerInfo.name, printerInfo.nickname, status)
       return 'insert Printer succeed'
+    },
+    setPrinter: async (_, { printerInfo, file }, { dataSources }) => {
+      const data = new FormData()
+
+      if (file) {
+        const { rstream, tempFilename } = await saveTmpFile(file)
+        data.append('driver', rstream, tempFilename)
+      }
+      lodash.forEach(printerInfo, (value, key) => {
+        if (value && value.length !== 0) {
+          data.append(key, value.toString())
+        }
+      })
+      await dataSources.CoreAPI.updatePrinterByName(data)
     }
   },
   Printer: {

@@ -17,7 +17,7 @@ export const userType = gql`
   input UserInput {
       userName: String!
       password: String!
-      roles: [UserRole]! = [GUEST]
+      roles: [UserRole] = [GUEST]
   }
   
 `

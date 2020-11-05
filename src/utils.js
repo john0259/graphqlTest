@@ -1,3 +1,7 @@
+import Path from 'path'
+import Moment from 'moment'
+import { createWriteStream, unlink } from 'fs'
+
 export const paginateResults = ({
   after: cursor,
   pageSize = 20,
@@ -24,4 +28,23 @@ export const paginateResults = ({
         Math.min(results.length, cursorIndex + 1 + pageSize)
       )
     : results.slice(0, pageSize)
+}
+
+export const saveTmpFile = async (file) => {
+  const { createReadStream, filename } = await file
+  const fileParse = Path.parse(filename)
+  const tempFilename = `./tmp/${fileParse.name}_${Moment().format('YYYYMMDDHHmm') + fileParse.ext}`
+  const stream = createReadStream()
+
+  await new Promise((resolve, reject) => {
+    stream
+      .pipe(createWriteStream(tempFilename))
+      .on('finish', resolve)
+      .on('error', (error) => {
+        unlink(tempFilename, () => reject(error))
+        console.log('writerror....', error)
+      })
+  })
+  const rstream = createReadStream(tempFilename)
+  return { rstream, tempFilename }
 }

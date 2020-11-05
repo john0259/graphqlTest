@@ -24,7 +24,6 @@ export default class CoreAPI extends RESTDataSource {
       return this.parseBody(response).then(result => result.data)
     } else {
       const error = await this.errorFromResponse(response)
-      console.log()
       throw Boom.boomify(error, {
         message: error.extensions.response.body.error.message,
         statusCode: error.extensions.response.status
@@ -42,6 +41,10 @@ export default class CoreAPI extends RESTDataSource {
 
   async getPrinterStatusByName(name) {
     return this.get(`/printDriver/printerStatus?name=${name}`).then(result => result.status)
+  }
+
+  async updatePrinterByName(updateData) {
+    return this.put('/printDriver/printer', updateData)
   }
 
   async createUser(user) {

@@ -30,13 +30,20 @@ export const query = gql`
         """
         signUp(userInfo: UserInput!): String
         """
-        帳號登入
+        帳號登入並回傳token
         """
         login(userName: String!, password: String!): String
+        """
+        編輯帳號權限
+        """
         setRoleByUserName(userName: String!, roles: [UserRole]!): User @auth(requires: ADMIN) @isAuthenticated
         insertACC(AccContent: ACCInput!): ACC @isAuthenticated @auth(requires: MANAGER)
         deleteACC(name: String!): String @auth(requires: MANAGER) @isAuthenticated
-        insertPrinter(printerInfo: PrinterInput!, file: Upload): String
+        """
+        新增打印機
+        """
+        insertPrinter(printerInfo: PrinterInput!, file: Upload): String @auth(requires: MANAGER) @isAuthenticated
+        setPrinter(printerInfo: setPrinterInput!, file: Upload): Printer
         uploadFile(files: [Upload]!): [File]
     }
 

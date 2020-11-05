@@ -23,4 +23,11 @@ export const printerType = gql`
       uri: String
       trayInfo: [String]!
   }
+  
+  input setPrinterInput {
+      name: String!
+      ip: String
+      uri: String
+      trayInfo: [String]
+  }
 `
