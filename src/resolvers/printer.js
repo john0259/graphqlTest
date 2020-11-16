@@ -40,6 +40,7 @@ export const printerResolvers = {
         }
       })
       await dataSources.CoreAPI.updatePrinterByName(data)
+      return 'update Printer succeed'
     }
   },
   Printer: {

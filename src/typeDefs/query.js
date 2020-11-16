@@ -43,7 +43,7 @@ export const query = gql`
         新增打印機
         """
         insertPrinter(printerInfo: PrinterInput!, file: Upload): String @auth(requires: MANAGER) @isAuthenticated
-        setPrinter(printerInfo: setPrinterInput!, file: Upload): Printer
+        setPrinter(printerInfo: setPrinterInput!, file: Upload): String @auth(requires: MANAGER) @isAuthenticated
         uploadFile(files: [Upload]!): [File]
     }
 
