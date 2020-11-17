@@ -37,7 +37,7 @@ export const query = gql`
         編輯帳號權限
         """
         setRoleByUserName(userName: String!, roles: [UserRole]!): User @auth(requires: ADMIN) @isAuthenticated
-        insertACC(AccContent: ACCInput!): ACC @isAuthenticated @auth(requires: MANAGER)
+        insertACC(AccContent: ACCInput!): ACC @auth(requires: MANAGER) @isAuthenticated
         deleteACC(name: String!): String @auth(requires: MANAGER) @isAuthenticated
         """
         新增打印機
