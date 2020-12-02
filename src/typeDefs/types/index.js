@@ -1,5 +1,6 @@
 import { ACCType } from './ACCType'
 import { userType } from './userType'
+import { printerType } from './printerType'
 import { gql } from 'apollo-server'
 
 const utils = gql`
@@ -10,4 +11,4 @@ const utils = gql`
   }
 `
 
-export const types = [ACCType, userType, utils]
+export const types = [ACCType, userType, printerType, utils]

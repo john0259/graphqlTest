@@ -1,5 +1,6 @@
 import { ACCResolvers } from './ACC'
 import { userResolvers } from './user'
+import { printerResolvers } from './printer'
 import logger from '../logger'
 import { createWriteStream, unlink } from 'fs'
 
@@ -40,4 +41,4 @@ const utilsResolver = {
   }
 }
 
-export const resolvers = [ACCResolvers, userResolvers, utilsResolver]
+export const resolvers = [ACCResolvers, userResolvers, printerResolvers, utilsResolver]
